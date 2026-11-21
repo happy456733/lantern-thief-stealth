@@ -25,7 +25,7 @@ export const LEVELS = [
       '####################',
     ],
     guards: [
-      { waypoints: [[5, 2], [14, 2]], facing: 0, pause: 1.2 },
+      { waypoints: [[8, 2], [8, 6]], facing: Math.PI / 2, pause: 1.2 },
       { waypoints: [[16, 4], [16, 10]], facing: Math.PI / 2, pause: 1.0 },
     ],
   },
@@ -49,9 +49,9 @@ export const LEVELS = [
       '####################',
     ],
     guards: [
-      { waypoints: [[6, 1], [6, 6]], facing: Math.PI / 2, pause: 1.0 },
-      { waypoints: [[13, 3], [13, 8]], facing: Math.PI / 2, pause: 1.4 },
-      { waypoints: [[3, 11], [13, 11]], facing: 0, pause: 0.8 },
+      { waypoints: [[5, 2], [5, 5]], facing: Math.PI / 2, pause: 1.0 },
+      { waypoints: [[12, 4], [12, 8]], facing: Math.PI / 2, pause: 1.4 },
+      { waypoints: [[17, 1], [17, 4]], facing: Math.PI / 2, pause: 0.8 },
     ],
   },
   {
@@ -75,9 +75,9 @@ export const LEVELS = [
     ],
     guards: [
       { waypoints: [[6, 1], [6, 5]], facing: Math.PI / 2, pause: 1.0 },
-      { waypoints: [[14, 2], [14, 6]], facing: Math.PI / 2, pause: 1.2 },
-      { waypoints: [[9, 8], [13, 8]], facing: 0, pause: 0.9 },
-      { waypoints: [[16, 4], [16, 9]], facing: Math.PI / 2, pause: 1.1 },
+      { waypoints: [[14, 2], [14, 4]], facing: Math.PI / 2, pause: 1.2 },
+      { waypoints: [[12, 8], [15, 8]], facing: 0, pause: 0.9 },
+      { waypoints: [[16, 4], [16, 7]], facing: Math.PI / 2, pause: 1.1 },
     ],
   },
 ];

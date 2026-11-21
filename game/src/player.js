@@ -1,10 +1,9 @@
 // The thief: moves with the keyboard, sneaks slowly and quietly, runs fast
 // and loud, and tosses pebbles with the mouse to pull a guard away.
 import {
-  PLAYER_RADIUS, PLAYER_WALK_SPEED, PLAYER_SNEAK_SPEED,
-  TILE, COLS, ROWS, NOISE_WALK_RADIUS,
+  PLAYER_RADIUS, PLAYER_WALK_SPEED, PLAYER_SNEAK_SPEED, NOISE_WALK_RADIUS,
 } from './config.js';
-import { isSolid } from './levels.js';
+import { circleHitsSolid } from './sight.js';
 
 export class Player {
   constructor(x, y) {
@@ -50,14 +49,7 @@ export class Player {
 
   // True when a circle of the thief's radius at (x, y) overlaps a solid tile.
   _hitsSolid(solids, x, y) {
-    const r = PLAYER_RADIUS - 1;
-    for (const [ox, oy] of [[-r, -r], [r, -r], [-r, r], [r, r], [0, -r], [0, r], [-r, 0], [r, 0]]) {
-      const tx = Math.floor((x + ox) / TILE);
-      const ty = Math.floor((y + oy) / TILE);
-      if (tx < 0 || ty < 0 || tx >= COLS || ty >= ROWS) return true;
-      if (isSolid(solids, tx, ty)) return true;
-    }
-    return false;
+    return circleHitsSolid(solids, x, y, PLAYER_RADIUS);
   }
 
   // Toss a pebble toward (tx, ty). Returns the landing spot or null when the

@@ -2,11 +2,11 @@
 // to the thief in stages — unaware, suspicious, alarmed, chasing — with a
 // chance to calm down again when the thief slips out of sight.
 import {
-  GUARD_PATROL_SPEED, GUARD_INVESTIGATE_SPEED, GUARD_CHASE_SPEED,
+  GUARD_RADIUS, GUARD_PATROL_SPEED, GUARD_INVESTIGATE_SPEED, GUARD_CHASE_SPEED,
   VISION_RANGE, VISION_HALF_ANGLE, SUSPICION_GAIN, SUSPICION_DECAY,
   SUSPICIOUS_AT, ALARM_AT, CAUGHT_AT, TILE,
 } from './config.js';
-import { hasLineOfSight, angleDifference } from './sight.js';
+import { hasLineOfSight, angleDifference, circleHitsSolid } from './sight.js';
 
 export const GUARD_STATE = {
   PATROL: 'patrol',
@@ -45,16 +45,26 @@ export class Guard {
     return hasLineOfSight(solids, this.x, this.y, px, py);
   }
 
-  // Walk toward (tx, ty) at `speed`; return true when arrived.
-  _moveToward(tx, ty, speed, dt) {
+  // Walk toward (tx, ty) at `speed`, sliding along walls like the thief
+  // does; return true when arrived, false when a wall blocks the way.
+  _moveToward(tx, ty, speed, dt, solids) {
     const dx = tx - this.x;
     const dy = ty - this.y;
     const dist = Math.hypot(dx, dy);
     if (dist < 3) return true;
     const step = Math.min(dist, speed * dt);
-    this.x += (dx / dist) * step;
-    this.y += (dy / dist) * step;
-    this.facing = Math.atan2(dy, dx);
+    const nx = this.x + (dx / dist) * step;
+    const ny = this.y + (dy / dist) * step;
+    let moved = false;
+    if (!circleHitsSolid(solids, nx, this.y, GUARD_RADIUS)) {
+      this.x = nx;
+      moved = true;
+    }
+    if (!circleHitsSolid(solids, this.x, ny, GUARD_RADIUS)) {
+      this.y = ny;
+      moved = true;
+    }
+    if (moved) this.facing = Math.atan2(dy, dx);
     return dist - step < 3;
   }
 
@@ -119,7 +129,7 @@ export class Guard {
           break;
         }
         const target = this.waypoints[this.wpIndex];
-        if (this._moveToward(target.x, target.y, GUARD_PATROL_SPEED, dt)) {
+        if (this._moveToward(target.x, target.y, GUARD_PATROL_SPEED, dt, solids)) {
           this.wpIndex = (this.wpIndex + 1) % this.waypoints.length;
           this.waitTimer = this.pause;
         }
@@ -143,7 +153,7 @@ export class Guard {
           this.state = GUARD_STATE.RETURN;
           break;
         }
-        if (this._moveToward(target.x, target.y, GUARD_INVESTIGATE_SPEED, dt)) {
+        if (this._moveToward(target.x, target.y, GUARD_INVESTIGATE_SPEED, dt, solids)) {
           this.investigateTarget = null;
           this.waitTimer = 1.4;
           this.state = GUARD_STATE.LOOK;
@@ -153,7 +163,7 @@ export class Guard {
       case GUARD_STATE.CHASE: {
         if (seen || this.lastSeen) {
           const target = seen ? { x: player.x, y: player.y } : this.lastSeen;
-          this._moveToward(target.x, target.y, GUARD_CHASE_SPEED, dt);
+          this._moveToward(target.x, target.y, GUARD_CHASE_SPEED, dt, solids);
         }
         if (this.suspicion < ALARM_AT && !seen) {
           this.state = GUARD_STATE.INVESTIGATE;
@@ -172,13 +182,44 @@ export class Guard {
             nearest = wp;
           }
         }
-        if (this._moveToward(nearest.x, nearest.y, GUARD_PATROL_SPEED, dt)) {
+        if (this._moveToward(nearest.x, nearest.y, GUARD_PATROL_SPEED, dt, solids)) {
           this.wpIndex = (this.waypoints.indexOf(nearest) + 1) % this.waypoints.length;
           this.state = GUARD_STATE.PATROL;
         }
         break;
       }
     }
+
+    // A guard walled off from its target gives up and walks back to its
+    // route instead of pushing at the wall forever.
+    if (this.state === GUARD_STATE.INVESTIGATE || this.state === GUARD_STATE.CHASE
+      || this.state === GUARD_STATE.RETURN) {
+      const moved = Math.hypot(this.x - (this._lastX ?? this.x), this.y - (this._lastY ?? this.y));
+      this._stuckTimer = moved > 2 ? 0 : (this._stuckTimer ?? 0) + dt;
+      if (this._stuckTimer > 1.5) {
+        this._stuckTimer = 0;
+        this.investigateTarget = null;
+        if (this.state === GUARD_STATE.RETURN) {
+          let nearest = this.waypoints[0];
+          let best = Infinity;
+          for (const wp of this.waypoints) {
+            const d = Math.hypot(wp.x - this.x, wp.y - this.y);
+            if (d < best) {
+              best = d;
+              nearest = wp;
+            }
+          }
+          this.wpIndex = (this.waypoints.indexOf(nearest) + 1) % this.waypoints.length;
+          this.state = GUARD_STATE.PATROL;
+        } else {
+          this.state = GUARD_STATE.RETURN;
+        }
+      }
+    } else {
+      this._stuckTimer = 0;
+    }
+    this._lastX = this.x;
+    this._lastY = this.y;
 
     // Footstep timing for the audio cue: faster when the guard hurries.
     const speed = this.state === GUARD_STATE.CHASE ? GUARD_CHASE_SPEED

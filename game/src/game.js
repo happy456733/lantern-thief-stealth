@@ -111,7 +111,7 @@ export class Game {
 
     if (this.screen === SCREEN.BRIEF) {
       this.screenTimer += dt;
-      if (this.screenTimer > 0.4 && (this.input.consumeKey('enter') || this.input.consumeClick())) {
+      if (this.screenTimer > 0.15 && (this.input.consumeKey('enter') || this.input.consumeClick())) {
         this.sounds.ensure();
         this.screen = SCREEN.PLAYING;
       }

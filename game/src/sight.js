@@ -57,3 +57,18 @@ export function angleDifference(a, b) {
   while (d < -Math.PI) d += Math.PI * 2;
   return Math.abs(d);
 }
+
+// True when a circle of `radius` at (x, y) overlaps a solid tile — the
+// collision test both the thief and the guards use, so neither walks
+// through a wall or a crate.
+export function circleHitsSolid(solids, x, y, radius) {
+  const r = radius - 1;
+  const offsets = [[-r, -r], [r, -r], [-r, r], [r, r], [0, -r], [0, r], [-r, 0], [r, 0]];
+  for (const [ox, oy] of offsets) {
+    const tx = Math.floor((x + ox) / TILE);
+    const ty = Math.floor((y + oy) / TILE);
+    if (tx < 0 || ty < 0 || tx >= COLS || ty >= ROWS) return true;
+    if (isSolid(solids, tx, ty)) return true;
+  }
+  return false;
+}

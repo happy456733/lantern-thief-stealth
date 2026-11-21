@@ -20,7 +20,9 @@ let last = performance.now();
 function frame(now) {
   const dt = Math.min(0.05, Math.max(0, (now - last) / 1000));
   last = now;
-  game.update(dt);
+  // A staged screenshot holds its pose: the loop draws but never advances,
+  // so guards and cones stay exactly where the shot put them.
+  if (!shot) game.update(dt);
   game.draw();
   requestAnimationFrame(frame);
 }

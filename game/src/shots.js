@@ -18,9 +18,9 @@ export function stageShot(game, name) {
     game.player.y = 6.5 * 48;
     game.player.sneaking = true;
     game.player.facing = Math.PI / 4;
-    game.guards[0].x = 9.5 * 48;
+    game.guards[0].x = 7.5 * 48;
     game.guards[0].y = 2.5 * 48;
-    game.guards[0].facing = Math.PI * 0.75;
+    game.guards[0].facing = 2.0;
     game.guards[0].state = GUARD_STATE.PATROL;
     game.guards[1].x = 16.5 * 48;
     game.guards[1].y = 7.5 * 48;
@@ -39,9 +39,9 @@ export function stageShot(game, name) {
     game.player.facing = Math.PI;
     game.gems[0].taken = true;
     game.gemsLeft -= 1;
-    game.guards[0].x = 11.5 * 48;
-    game.guards[0].y = 9.5 * 48;
-    game.guards[0].facing = Math.PI;
+    game.guards[0].x = 13.5 * 48;
+    game.guards[0].y = 10.5 * 48;
+    game.guards[0].facing = Math.PI * 0.9;
     game.guards[0].suspicion = 0.62;
     game.guards[0].state = GUARD_STATE.LOOK;
     game.guards[0].lastSeen = { x: 8.5 * 48, y: 10.5 * 48 };
@@ -61,7 +61,7 @@ export function stageShot(game, name) {
     game.player.x = 17.5 * 48;
     game.player.y = 12.5 * 48;
     game.player.facing = 0;
-    game.guards[0].x = 9.5 * 48;
+    game.guards[0].x = 7.5 * 48;
     game.guards[0].y = 2.5 * 48;
     game.guards[0].facing = 0;
     game.screen = SCREEN.LEVEL_CLEAR;
