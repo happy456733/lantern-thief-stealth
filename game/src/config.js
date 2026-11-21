@@ -1,61 +1,55 @@
-// Every tuning number and colour in one place. The playfield is a fixed 1280x720 logical area;
-// the renderer scales it to the window, so no rule below depends on the screen size.
+// Shared tuning for Lantern Thief: tile size, speeds, sight and sound ranges.
+// One file holds the numbers so a level or a guard never hard-codes them.
+export const TILE = 48;
+export const COLS = 20;
+export const ROWS = 14;
+export const VIEW_W = COLS * TILE; // 960
+export const VIEW_H = ROWS * TILE; // 672
 
-export const FIELD = { width: 1280, height: 720, groundY: 664 };
+export const PLAYER_RADIUS = 13;
+export const PLAYER_WALK_SPEED = 150; // px per second
+export const PLAYER_SNEAK_SPEED = 78;
 
-/** The simulation's fixed step, in seconds: 60 updates a second whatever the display's rate. */
-export const STEP = 1 / 60;
+export const GUARD_RADIUS = 14;
+export const GUARD_PATROL_SPEED = 62;
+export const GUARD_INVESTIGATE_SPEED = 96;
+export const GUARD_CHASE_SPEED = 168;
 
-export const PLAYER = {
-  width: 72,
-  height: 24,
-  speed: 560,
-  invulnerable: 1.5,
-};
+export const VISION_RANGE = 215; // how far a guard can see, in px
+export const VISION_HALF_ANGLE = 0.62; // radians either side of facing (~35 deg)
+export const SUSPICION_GAIN = 1.15; // per second, fully in view at close range
+export const SUSPICION_DECAY = 0.28; // per second, out of sight
+export const SUSPICIOUS_AT = 0.35; // guard turns and looks
+export const ALARM_AT = 0.72; // guard walks to the last seen spot
+export const CAUGHT_AT = 1.0; // guard sprints at the player
 
-export const LIVES = 3;
+export const NOISE_WALK_RADIUS = 70; // guards hear footsteps inside this
+export const NOISE_PEBBLE_RADIUS = 190;
 
-export const BLOCK = {
-  minWidth: 40,
-  maxWidth: 110,
-  height: 36,
-  speed: 240,
-  speedPerLevel: 30,
-  speedJitter: 90,
-  interval: 0.55,
-  intervalScale: 0.88,
-  minInterval: 0.14,
-  dodgePoints: 1,
-};
+export const STARTING_PEBBLES = 3;
+export const STARTING_LIVES = 3;
 
-export const COIN = {
-  size: 24,
-  speed: 190,
-  speedPerLevel: 14,
-  interval: 1.4,
-  intervalJitter: 0.8,
-  points: 10,
-};
-
-/** Seconds of play per level, and the last level: speeds and spawn rates stop growing there. */
-export const LEVEL = { seconds: 12, max: 12 };
-
-/** How many falling things can exist at once; the pool is allocated once, at boot. */
-export const POOL_SIZE = 64;
-
+// Palette: a night museum — deep plum floors, brass, ember orange, watchman blue.
 export const PALETTE = {
-  backdrop: '#11141b',
-  sky: '#1b1f2a',
-  ground: '#2a3040',
-  player: '#4fc3f7',
-  block: '#e5534b',
-  coin: '#f2c94c',
-  panel: '#252b38',
-  text: '#eef1f5',
-  muted: '#8b93a3',
+  floorA: '#241d33',
+  floorB: '#201a2e',
+  floorLine: '#2e2642',
+  wall: '#4a3f63',
+  wallTop: '#6b5a8f',
+  crate: '#7a5a34',
+  crateTop: '#a97e47',
+  crateEdge: '#5d4423',
+  gem: '#ffb347',
+  gemCore: '#ffe9a8',
+  exit: '#39d98a',
+  exitGlow: '#1d7a4c',
+  player: '#e8b64c',
+  playerCloak: '#3a2b12',
+  guard: '#5b8dd9',
+  guardDark: '#2c4a7a',
+  coneCalm: 'rgba(255, 214, 110, 0.20)',
+  coneSuspicious: 'rgba(255, 190, 60, 0.34)',
+  coneAlarmed: 'rgba(255, 70, 60, 0.38)',
+  text: '#f2ead8',
+  dimText: '#9a8fb5',
 };
-
-export const FONT = 'system-ui, -apple-system, "Segoe UI", sans-serif';
-
-/** Where the best score is kept between visits (this browser only). */
-export const BEST_KEY = 'block-dodger.best';

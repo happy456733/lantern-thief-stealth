@@ -1,19 +1,25 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Block Dodger</title>
+<title>Lantern Thief — Shadow of the Ember Museum</title>
 <style>
-  html, body { margin: 0; height: 100%; overflow: hidden; background: #11141b; }
-  #game { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
-  /* Read aloud, never shown: the status line screen readers announce. */
-  #status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  html, body { margin: 0; padding: 0; background: #0b0a12; height: 100%; }
+  body { display: flex; align-items: center; justify-content: center; font-family: Georgia, 'Times New Roman', serif; }
+  #wrap { position: relative; width: 960px; height: 672px; box-shadow: 0 0 60px #000; }
+  canvas { display: block; width: 960px; height: 672px; background: #17131f; }
+  #hint {
+    position: absolute; left: 0; right: 0; bottom: -30px; text-align: center;
+    color: #8f86a8; font-size: 13px; letter-spacing: 0.4px;
+  }
 </style>
 </head>
 <body>
-<canvas id="game" aria-label="Block Dodger: move the paddle left and right to dodge falling blocks and catch coins"></canvas>
-<p id="status" role="status" aria-live="polite"></p>
+<div id="wrap">
+  <canvas id="game" width="960" height="672"></canvas>
+  <div id="hint">WASD / arrows — move &nbsp;·&nbsp; SHIFT — sneak &nbsp;·&nbsp; CLICK — toss a pebble &nbsp;·&nbsp; P — pause &nbsp;·&nbsp; M — mute</div>
+</div>
 <script type="module" src="./src/main.js"></script>
 </body>
 </html>
